@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz SBI Feedback</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI,sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#4facfe,#00f2fe);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    background:#fff;
+    width:100%;
+    max-width:800px;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h1{
+    text-align:center;
+    color:#333;
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:10px;
+}
+
+button{
+    background:#007bff;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+.hidden{
+    display:none;
+}
+
+.progress-container{
+    width:100%;
+    height:12px;
+    background:#ddd;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:#28a745;
+    transition:0.3s;
+}
+
+.question{
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.option{
+    display:block;
+    width:100%;
+    text-align:left;
+    margin-bottom:10px;
+    background:#f4f4f4;
+    color:#333;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+}
+
+.option:hover{
+    background:#dbeafe;
+}
+
+.result{
+    text-align:center;
+}
+
+.result h2{
+    color:#28a745;
+    margin-bottom:15px;
+}
+
+.score{
+    font-size:28px;
+    font-weight:bold;
+    margin:15px 0;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Trang nhập thông tin -->
+    <div id="startPage">
+        <h1>BÀI QUIZ SAU ĐÀO TẠO SBI</h1>
+
+        <input type="text" id="name" placeholder="Họ và tên">
+
+        <input type="text" id="department" placeholder="Phòng ban">
+
+        <button onclick="startQuiz()">Bắt đầu làm bài</button>
+    </div>
+
+    <!-- Quiz -->
+    <div id="quizPage" class="hidden">
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div id="questionContainer"></div>
+
+    </div>
+
+    <!-- Kết quả -->
+    <div id="resultPage" class="hidden result">
+        <h2>KẾT QUẢ</h2>
+
+        <p id="userInfo"></p>
+
+        <div class="score" id="scoreText"></div>
+
+        <h3 id="rankText"></h3>
+
+        <br>
+
+        <button onclick="location.reload()">
+            Làm lại
+        </button>
+    </div>
+
+</div>
+
+<script>
+
+const questions = [
+
+{
+question:"SBI là viết tắt của cụm từ nào?",
+options:[
+"Situation – Behavior – Improvement",
+"Situation – Behavior – Impact",
+"Solution – Behavior – Impact",
+"Situation – Benefit – Impact"
+],
+answer:1
+},
+
+{
+question:"Mục tiêu chính của mô hình SBI là gì?",
+options:[
+"Đánh giá năng lực nhân viên",
+"Phê bình sai sót của nhân viên",
+"Đưa ra phản hồi rõ ràng, khách quan và mang tính xây dựng",
+"Kiểm soát hành vi của nhân viên"
+],
+answer:2
+},
+
+{
+question:"Trong mô hình SBI, Situation dùng để mô tả:",
+options:[
+"Tính cách của người nhận phản hồi",
+"Tình huống hoặc bối cảnh cụ thể xảy ra hành vi",
+"Mức độ nghiêm trọng của lỗi",
+"Giải pháp cần thực hiện"
+],
+answer:1
+},
+
+{
+question:"Trong mô hình SBI, Behavior là:",
+options:[
+"Suy nghĩ của người phản hồi",
+"Kết quả công việc",
+"Hành vi cụ thể có thể quan sát được",
+"Mức độ hài lòng của quản lý"
+],
+answer:2
+},
+
+{
+question:"Trong mô hình SBI, Impact thể hiện:",
+options:[
+"Tác động hoặc ảnh hưởng của hành vi",
+"Cảm xúc của người nhận phản hồi",
+"Quy định của công ty",
+"Kế hoạch đào tạo"
+],
+answer:0
+},
+
+{
+question:"Câu phản hồi nào KHÔNG theo mô hình SBI?",
+options:[
+"Trong cuộc họp sáng nay, bạn ngắt lời đồng nghiệp nhiều lần khiến cuộc thảo luận bị gián đoạn",
+"Bạn rất thiếu chuyên nghiệp",
+"Trong dự án ABC, bạn gửi báo cáo trễ 2 ngày làm ảnh hưởng tiến độ tổng hợp",
+"Trong buổi họp khách hàng hôm qua, bạn trình bày rõ ràng giúp khách hàng hiểu vấn đề nhanh hơn"
+],
+answer:1
+},
+
+{
+question:"Vì sao feedback cảm tính thường kém hiệu quả?",
+options:[
+"Vì quá ngắn gọn",
+"Vì chỉ tập trung vào kết quả",
+"Vì mang tính đánh giá cá nhân, thiếu hành vi cụ thể",
+"Vì sử dụng quá nhiều dữ liệu"
+],
+answer:2
+},
+
+{
+question:"Đâu là ví dụ đúng về phần Behavior?",
+options:[
+"Bạn thiếu trách nhiệm",
+"Bạn không chuyên nghiệp",
+"Bạn nộp báo cáo trễ 2 ngày so với thời hạn",
+"Bạn cần cố gắng hơn"
+],
+answer:2
+},
+
+{
+question:"Lợi ích của việc áp dụng SBI là:",
+options:[
+"Giảm tính phòng thủ khi nhận phản hồi",
+"Tăng tính khách quan",
+"Giúp người nhận hiểu rõ hành vi cần thay đổi",
+"Tất cả các đáp án trên"
+],
+answer:3
+},
+
+{
+question:"Hãy chọn câu feedback theo mô hình SBI hoàn chỉnh nhất:",
+options:[
+"Bạn làm việc chưa tốt",
+"Bạn cần cải thiện thái độ",
+"Trong cuộc họp ngày 05/06, bạn đến muộn 15 phút khiến cả nhóm phải chờ và làm chậm tiến độ bắt đầu cuộc họp",
+"Tôi không hài lòng với bạn"
+],
+answer:2
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function startQuiz(){
+
+const name=document.getElementById("name").value.trim();
+const department=document.getElementById("department").value.trim();
+
+if(name==="" || department===""){
+alert("Vui lòng nhập đầy đủ thông tin.");
+return;
+}
+
+document.getElementById("startPage").classList.add("hidden");
+document.getElementById("quizPage").classList.remove("hidden");
+
+showQuestion();
+}
+
+function showQuestion(){
+
+const q=questions[currentQuestion];
+
+document.getElementById("progressBar").style.width =
+((currentQuestion)/questions.length)*100 + "%";
+
+let html=`
+<div class="question">
+Câu ${currentQuestion+1}: ${q.question}
+</div>
+`;
+
+q.options.forEach((option,index)=>{
+html += `
+<button class="option"
+onclick="selectAnswer(${index})">
+${String.fromCharCode(65+index)}. ${option}
+</button>
+`;
+});
+
+document.getElementById("questionContainer").innerHTML=html;
+}
+
+function selectAnswer(index){
+
+if(index===questions[currentQuestion].answer){
+score++;
+}
+
+currentQuestion++;
+
+if(currentQuestion<questions.length){
+showQuestion();
+}
+else{
+showResult();
+}
+}
+
+function showResult(){
+
+document.getElementById("quizPage").classList.add("hidden");
+document.getElementById("resultPage").classList.remove("hidden");
+
+document.getElementById("progressBar").style.width="100%";
+
+const name=document.getElementById("name").value;
+const department=document.getElementById("department").value;
+
+document.getElementById("userInfo").innerHTML=
+`<strong>${name}</strong><br>${department}`;
+
+document.getElementById("scoreText").innerHTML=
+`${score}/10`;
+
+let rank="";
+
+if(score>=9){
+rank="Xuất sắc";
+}
+else if(score>=7){
+rank="Đạt";
+}
+else if(score>=5){
+rank="Cần củng cố thêm";
+}
+else{
+rank="Chưa đạt";
+}
+
+document.getElementById("rankText").innerHTML=
+`Xếp loại: ${rank}`;
+}
+
+</script>
+
+</body>
+</html>
